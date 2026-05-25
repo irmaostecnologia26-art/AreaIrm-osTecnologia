@@ -136,7 +136,7 @@
                     O que <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">precisas</span> hoje?
                 </h2>
                 <p class="text-gray-400 mt-3 text-sm sm:text-base max-w-2xl mx-auto">
-                    Explica o teu problema ou projeto. Nós solucionamos de forma rápida e direta através do WhatsApp!
+                    Escreve a tua necessidade abaixo e prime <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-xs font-semibold text-white border border-white/20">Enter</kbd> para prosseguir para o atendimento!
                 </p>
             </div>
 
@@ -150,36 +150,21 @@
                 <form id="request-form" onsubmit="handleRequestSubmit(event)" class="relative z-10 space-y-6">
                     <div>
                         <label for="user-needs" class="block text-sm font-bold text-indigo-300 uppercase tracking-wider mb-2">
-                            <i class="fa-regular fa-comment-dots mr-2"></i>Descreve a tua necessidade
+                            <i class="fa-regular fa-comment-dots mr-2"></i>O que precisas?
                         </label>
                         <textarea id="user-needs" rows="4" required
                             class="w-full bg-[#090514]/90 border border-indigo-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-2xl p-4 text-white placeholder-gray-500 focus:outline-none transition-all resize-none text-base shadow-inner"
-                            placeholder="Ex: O meu computador não liga... ou: Preciso de um website para a minha loja."></textarea>
-                    </div>
-
-                    <!-- Campos para utilizadores anónimos -->
-                    <div id="anonymous-form-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label for="contact-name" class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">O teu Nome</label>
-                            <input type="text" id="contact-name" 
-                                class="w-full bg-[#090514]/90 border border-indigo-900 focus:border-indigo-500 rounded-xl p-3 text-white placeholder-gray-600 focus:outline-none text-sm"
-                                placeholder="Como te podemos chamar?">
-                        </div>
-                        <div>
-                            <label for="contact-phone" class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">WhatsApp (Opcional)</label>
-                            <input type="tel" id="contact-phone" 
-                                class="w-full bg-[#090514]/90 border border-indigo-900 focus:border-indigo-500 rounded-xl p-3 text-white placeholder-gray-600 focus:outline-none text-sm"
-                                placeholder="Ex: 912 345 678">
-                        </div>
+                            placeholder="Ex: O meu computador não liga... ou: Preciso de um website para a minha loja."
+                            onkeydown="handleKeyPress(event)"></textarea>
                     </div>
 
                     <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform active:scale-[0.98] hover:-translate-y-0.5 shadow-xl shadow-indigo-600/20 flex items-center justify-center gap-3">
                         <i class="fa-solid fa-paper-plane"></i>
-                        <span>Enviar Pedido de Suporte</span>
+                        <span>Confirmar e Escolher Funcionário</span>
                     </button>
                 </form>
 
-                <!-- ECRÃ DE SUCESSO -->
+                <!-- ECRÃ DE SUCESSO E BOTÕES DO WHATSAPP (Só surge se houver texto escrito e após o Enter/Clique) -->
                 <div id="success-view" class="hidden relative z-10 text-center space-y-6 py-4 animate-fade-in">
                     <div class="inline-flex p-4 rounded-full bg-green-500/10 text-green-400 border border-green-500/20 mb-2">
                         <i class="fa-solid fa-circle-check text-4xl"></i>
@@ -309,15 +294,15 @@
                         </li>
                         <li class="flex gap-3">
                             <span class="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-blue-600/20 text-blue-400 text-xs font-extrabold">2</span>
-                            <span><strong>Escreve:</strong> Conta-nos o teu problema na caixa de texto.</span>
+                            <span><strong>Escreve:</strong> Conta-nos o teu problema ou ideia na caixa de texto.</span>
                         </li>
                         <li class="flex gap-3">
                             <span class="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-blue-600/20 text-blue-400 text-xs font-extrabold">3</span>
-                            <span><strong>Envia:</strong> Clica no botão de enviar pedido.</span>
+                            <span><strong>Envia:</strong> Prime <kbd class="px-1 py-0.5 rounded bg-white/10 text-xs text-white">Enter</kbd> ou prime no botão de confirmação.</span>
                         </li>
                         <li class="flex gap-3">
                             <span class="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-blue-600/20 text-blue-400 text-xs font-extrabold">4</span>
-                            <span><strong>WhatsApp:</strong> Escolhe o colaborador e abre o chat já com a tua mensagem pronta!</span>
+                            <span><strong>WhatsApp:</strong> Escolhe o colaborador e abre o chat já com o texto preenchido!</span>
                         </li>
                     </ol>
                 </div>
@@ -376,7 +361,6 @@
             
             if (loader) {
                 loader.classList.remove('hidden');
-                // Pequeno atraso para permitir que o CSS processe a remoção do 'hidden' antes de alterar a opacidade
                 setTimeout(() => loader.classList.remove('opacity-0'), 10);
             }
             
@@ -397,7 +381,6 @@
             const userProfile = document.getElementById('user-profile');
             const userAvatar = document.getElementById('user-avatar');
             const userName = document.getElementById('user-name');
-            const anonymousFields = document.getElementById('anonymous-form-fields');
 
             if (user && !user.isAnonymous) {
                 currentUser = user;
@@ -408,7 +391,6 @@
                 }
                 if (userAvatar) userAvatar.src = user.photoURL || 'https://via.placeholder.com/150';
                 if (userName) userName.innerText = user.displayName || 'Cliente';
-                if (anonymousFields) anonymousFields.classList.add('hidden');
             } else {
                 currentUser = null;
                 if (btnLogin) btnLogin.classList.remove('hidden');
@@ -416,7 +398,6 @@
                     userProfile.classList.add('hidden');
                     userProfile.classList.remove('flex');
                 }
-                if (anonymousFields) anonymousFields.classList.remove('hidden');
             }
         });
 
@@ -428,7 +409,6 @@
                 await triggerActionLoading(`Bem-vindo, ${result.user.displayName}!`, 1000);
             } catch (error) {
                 console.error("Erro no login:", error);
-                // Evita que o ecrã bloqueie caso o utilizador feche a aba de login
                 const loader = document.getElementById('dynamic-loader');
                 if(loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.classList.add('hidden'), 300); }
             }
@@ -444,46 +424,42 @@
             }
         };
 
+        // Tratar evento de teclado no textarea para aceitar o Enter
+        window.handleKeyPress = function(e) {
+            // Se pressionar Enter sem Shift, submete o formulário
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleRequestSubmit(e);
+            }
+        };
+
         // Lidar com a submissão do formulário
         window.handleRequestSubmit = async function(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
             
             const textarea = document.getElementById('user-needs');
             const needs = textarea ? textarea.value.trim() : "";
             
+            // Só executa a ação se o utilizador tiver de facto digitado algo
             if (!needs) {
-                alert("Por favor, descreve a tua necessidade antes de enviar.");
                 return;
             }
 
-            await triggerActionLoading('A processar o teu pedido...', 1200);
+            await triggerActionLoading('A preparar o envio...', 1000);
 
-            let senderName = "Cliente";
-            let senderPhone = "Não informado";
-
-            // Definir o nome de quem envia baseado no login ou preenchimento manual
-            if (currentUser && !currentUser.isAnonymous) {
-                senderName = currentUser.displayName;
-                senderPhone = currentUser.email;
-            } else {
-                const nameInput = document.getElementById('contact-name');
-                const phoneInput = document.getElementById('contact-phone');
-                if (nameInput && nameInput.value.trim()) senderName = nameInput.value.trim();
-                if (phoneInput && phoneInput.value.trim()) senderPhone = phoneInput.value.trim();
-            }
+            let senderName = currentUser && !currentUser.isAnonymous ? currentUser.displayName : "Cliente";
 
             // Gravação Direta na coleção 'solicitacoes'
             try {
                 const docRef = collection(db, 'solicitacoes');
                 await addDoc(docRef, {
                     nome: senderName,
-                    contato: senderPhone,
                     solicitacao: needs,
                     userId: auth.currentUser ? auth.currentUser.uid : "anonimo",
                     dataCriacao: serverTimestamp()
                 });
             } catch (error) {
-                console.warn("Aviso na gravação Firebase. A avançar para redirecionamento:", error);
+                console.warn("Aviso na gravação Firebase. A avançar:", error);
             }
 
             // Guardar texto para o WhatsApp
@@ -495,7 +471,7 @@
                 msgPreview.innerText = `"${needs}"`;
             }
             
-            // Trocar Visibilidade (Esconder form, mostrar sucesso)
+            // Trocar Visibilidade (Esconder form, mostrar sucesso com botões)
             document.getElementById('request-form').classList.add('hidden');
             const successView = document.getElementById('success-view');
             successView.classList.remove('hidden');
@@ -504,17 +480,7 @@
 
         // Disparo Final para o WhatsApp
         window.sendToWhatsApp = function(phoneNumber, targetName = '') {
-            let senderName = "Cliente";
-            
-            if (currentUser && !currentUser.isAnonymous) {
-                senderName = currentUser.displayName;
-            } else {
-                const nameInput = document.getElementById('contact-name');
-                if (nameInput && nameInput.value.trim()) {
-                    senderName = nameInput.value.trim();
-                }
-            }
-
+            let senderName = currentUser && !currentUser.isAnonymous ? currentUser.displayName : "Cliente";
             let saudacaoExtra = targetName && targetName !== 'Principal' ? ` Gostaria de falar com o *${targetName}*.` : '';
 
             const formattedMsg = `Olá Irmãos Tech!${saudacaoExtra}\n\nChamo-me *${senderName}* e solicito assistência:\n\n👉 *A minha necessidade:*\n"${pendingRequestText}"\n\n_Enviado pelo site oficial!_`;
